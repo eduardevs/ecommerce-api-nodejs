@@ -52,7 +52,23 @@ const requestHandler = (req, res) => {
     res.end();
 }
 
-// exporting 1
-// 1 module keyboard object, which has export property
+// MODULE SYSTEM WORK
+// * 1 module keyboard object, which has export property
+
+// module.exports = requestHandler;
 // we register in module.exports
-module.exports = requestHandler;
+
+// * 2. multiple exports in one file in an object
+// module.exports = {
+//     handler: requestHandler,
+//     someText: 'some text'
+// };
+
+// * 3) third way
+// module.exports.handler = requestHandler;
+// module.exports.someText = 'some text different exportly';
+
+// * 3.1 - shortcut
+
+exports.handler = requestHandler;
+exports.someText = 'some text different';
