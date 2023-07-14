@@ -1,29 +1,55 @@
 // server
 // global module
+const fs = require('fs');
 const http = require('http');
 
-// function exampleListener(req, res) {
-
-// }
-
-// http.createServer(exampleListener);
-
-// 2. Anonymous function: event driven pattern.
-
-
-// http.createServer(function(req, res) {
-    
-// })
-// next gen js syntax
-// - we  have to save it in a variable for listen 
 const server = http.createServer((req, res) => {
-    console.log(req);
-    // this will quit process, once the function is executed
-    // process.exit();
+    // SETTING URL
+    const url = req.url;
+    const method = req.method;
+
+    if (url === "/") {
+        res.setHeader('Content-Type', 'text/html');
+        res.write('<html>');
+        res.write('<head><title>My Page</title></head>');
+        res.write('<body><h1>Hola mundo!</h1><form action="/message" method="POST"><input type="text" name="message"></form></body>');
+        res.write('</html>');
+        return res.end();
+    }
+
+    if(url === '/message' && method === 'POST') {
+        //2. to be able to interact with the chunk we create a body variable 
+           const body = [];
+        // 1.here listener receives a chunk of data
+            req.on('data', (chunk) => {
+                // console.log(chunk);
+                // we push a new element into the body
+                body.push(chunk);
+            });
+        
+        // 4 we can now rely on all the chunks being read in and they're store in the body
+            req.on('end', () => {
+        // 5 to interact with them, we use Buffer
+                const parsedBody = Buffer.concat(body).toString();  // we concat
+                // console.log(parsedBody);
+                const message = parsedBody.split('=')[1];
+                fs.writeFileSync('message.txt', message);
+            });
+
+            // sending redirection code and redirecting header.
+            res.statusCode = 302;
+            res.setHeader('Location', '/');
+        }
+        res.setHeader('Content-Type', 'text/html');
+        res.write('<html>');
+        res.write('<head><title>Page nodejs</title></head>');
+        res.write('<body></body>');
+        res.write('</html>');
+        res.end();
+    // ! RETURN NOT TO RETURN res.end, but to stop the execution of the code.
+
 })
 
-// by default is port 80
-// -- before running the app.js nothing happen, now in the terminal, ongoing looping process listening for requests.
 server.listen(3000);
 // browser in http://localhost:3000/, we will log the req object received.
 // one thread, single javascript thread. It's running one thread.
