@@ -16,7 +16,7 @@ const requestHandler = (req, res) => {
     if (url === '/message' && method === 'POST') {
         const body = [];
         req.on('data', (chunk) => {
-
+            // getting all chunk of data
             body.push(chunk);
         });
         // return because we don't want the execution of the rest
@@ -30,20 +30,22 @@ const requestHandler = (req, res) => {
             // writeFileSync is blocking code that could block the rest of the execution
             // ? This code executes after the set header
             // fs.writeFileSync('message.txt', message);
-            // ? nodejs has internal registry of listeners. event registry, it will register the two handlers and move ons to the new line.* that's why we add return above. *1* callback is going to be call sometime in the future. 
+            // ? nodejs has internal registry of listeners. Event registry, it will register the two handlers and move on to the new line.* that's why we add return above. *1* callback is going to be call sometime in the future. That way nodejs is always running.
             // ! writeFileSync will code until the method is executed.
             fs.writeFile('message.txt', message, err => {
+                // ! we don't handle error here because is a simple process example, {this is a standard manner to do in nodejs}
                 res.statusCode = 302;
                 res.setHeader('Location', '/');
                 return res.end();
-            }); // event driven architecture : please do something and then it will go ahead to execute the code above, which node handles with a system process with uses multi-threating.
-            // then it will continue its even loop to listen for event callbacks to manage tiny actions like above to never block the code execution. Then just come back once an operation is done by the operating system.
-            // this is why node is high performance because never blocks code and the server.
-            // eventually, to manage a certain operation he says to the system, to that or to this, and eventually comes and do something in the callback that is not a blocking operation.
+            }); // ? EVENT DRIVEN ARCHITECTURE ?: 1. nodejs say to computer system: please do something and then it will go ahead to execute the code above, (nodejs handle the heavy task like file processing with a system process which uses multithreathing) 
+            
+            // ? 2.then it will continue its even loop to listen for event callbacks to manage tiny actions like above to never block the code execution. Then just come back once an operation is done by the operating system.
+            // ? 3.  This is why node is high performance because never blocks code and the server.
+            // ? eventually, to manage a certain operation he says to the system, to that or to this, and eventually comes and do something in the callback that is not a blocking operation.
         });
 
     }
-    // this code will be run before the 2nd callback
+    // this code will be run before the 2nd callback IF we don't add a return on the end event listener above.
     res.setHeader('Content-Type', 'text/html');
     res.write('<html>');
     res.write('<head><title>Page nodejs</title></head>');
