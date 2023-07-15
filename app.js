@@ -1,10 +1,4 @@
-// console.log('hola');
-// // 1) built-in functionalities nodejs : file system functionality -> (to work and write in a file)
-// const fs = require('fs');
-// fs.writeFileSync('hello.txt', 'hola desde nodejs'); // hello.txt will contain hola desde nodejs
-
 const http = require('http');
-const fs = require('fs');
 
 const dummyUsers = [
     {
@@ -65,6 +59,7 @@ const server = http.createServer((req, res) => {
         req.on('end', () => {
             const parsedBody = Buffer.concat(body).toString();
             const name = parsedBody.split('=')[1];
+
             dummyUsers.push({
                 name: name,
                 username: name,
@@ -76,18 +71,9 @@ const server = http.createServer((req, res) => {
         // return of the status that will make the redirection
         res.statusCode = 302;
         res.setHeader('Location', '/users');
-
-        return res.end();
+        res.end();
     }
-    //
-    // console.log(req);
-    // console.log({url})
-    // console.log('hello i\'m doing this first exercise!');
-    // res.write('<html>');
-    // res.write('<head><title>Hello App - Exercise 1</title></head>');
-    // res.write('<body><h1>Hello App - this comes from NodeJS</h1></body>');
-    // res.write('</html>');
-    // res.end();
+
 })
 
 
