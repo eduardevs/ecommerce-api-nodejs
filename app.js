@@ -1,32 +1,36 @@
-// server
-// global module
-const http = require('http');
-
-// function exampleListener(req, res) {
-
-// }
-
-// http.createServer(exampleListener);
-
-// 2. Anonymous function: event driven pattern.
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
 
 
-// http.createServer(function(req, res) {
-    
-// })
-// next gen js syntax
-// - we  have to save it in a variable for listen 
-const server = http.createServer((req, res) => {
-    console.log(req);
-    // this will quit process, once the function is executed
-    // process.exit();
+// * parsing the data => form in this case
+// -- as we did it before without express, this way is much easier.
+// -- the body is parsed before the request treatment in the middlewares below. 
+// -- extended:false = to disable options that have to be set to parse other bodies data, not default. (this case is by default for a form)
+app.use(bodyParser.urlencoded({extended:false}));
+
+app.use('/users', (req, res, next) => {
+    console.log('ieqfsdq');
+
 })
 
-// by default is port 80
-// -- before running the app.js nothing happen, now in the terminal, ongoing looping process listening for requests.
-server.listen(3000);
-// browser in http://localhost:3000/, we will log the req object received.
-// one thread, single javascript thread. It's running one thread.
+app.use('/user', (req, res, next) => {
+    // ! careful, a name always have to be set it in the input, to parse data.
+    res.send('<form action="/add-user" method="POST"><input type="text" placeholder="username" name="title"><input type="submit"></form>');
+})
 
-// register one function, that should be executed once is done, nodejs uses single thread javascript
-//executes code when certain event occur. It's always available. THE NODE LIFECYCLE & EVENT LOOP
+// using filtering from express
+app.post('/add-user', (req, res, next) => {
+    // ? we have to install body parser. and use it before this. 
+
+    console.log(req.body);
+    // we use redirect from express
+    res.redirect('/');
+})
+
+app.use('/', (req, res) => {
+    // console.log('ieqfsdq');
+    res.send('<h1>welcome</h1>');
+})
+
+app.listen(3000);
